@@ -1,0 +1,5 @@
+flask==3.0.*
+flask-wtf
+watchdog
+pydantic
+python-dotenv

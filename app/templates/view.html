@@ -1,0 +1,66 @@
+# app/templates/viewer.html
+{% extends "base.html" %}
+
+{% block content %}
+<h1>ResponseInsight Viewer</h1>
+<form id="filters">
+  <label>Project:</label>
+  <select id="project" name="project">
+    <option value="">-- Select --</option>
+    {% for p, _, _ in metadata %}
+      <option value="{{ p }}">{{ p }}</option>
+    {% endfor %}
+  </select>
+  <label>Step:</label>
+  <select id="step" name="step"></select>
+  <label>Prompt Name:</label>
+  <select id="prompt_name" name="prompt_name"></select>
+  <button type="submit">Filter</button>
+</form>
+<div id="results"></div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const metadata = {{ metadata|tojson }};
+
+function updateDropdown(selector, options) {
+  const el = document.getElementById(selector);
+  el.innerHTML = '<option value="">-- Select --</option>';
+  [...new Set(options)].forEach(opt => {
+    if (opt) el.innerHTML += `<option value="${opt}">${opt}</option>`;
+  });
+}
+
+document.getElementById('project').addEventListener('change', function() {
+  const selectedProject = this.value;
+  const steps = metadata.filter(([p, _, __]) => p === selectedProject).map(([_, s, __]) => s);
+  updateDropdown('step', steps);
+  updateDropdown('prompt_name', []);
+});
+
+document.getElementById('step').addEventListener('change', function() {
+  const selectedProject = document.getElementById('project').value;
+  const selectedStep = this.value;
+  const prompts = metadata.filter(([p, s, _]) => p === selectedProject && s === selectedStep).map(([_, __, n]) => n);
+  updateDropdown('prompt_name', prompts);
+});
+
+document.getElementById('filters').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const filters = {
+    project: document.getElementById('project').value,
+    step: document.getElementById('step').value,
+    prompt_name: document.getElementById('prompt_name').value
+  };
+
+  const res = await fetch('/get_filtered_responses', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(filters)
+  });
+  const data = await res.json();
+  document.getElementById('results').innerText = JSON.stringify(data, null, 2);
+});
+</script>
+{% endblock %}

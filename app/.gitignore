@@ -1,0 +1,46 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+.venv/
+env/
+venv/
+ENV/
+*.env
+
+# Flask / local config
+instance/
+config.pyc
+*.log
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# VSCode / IDE
+.vscode/
+.idea/
+
+# JSON data directory (optional — uncheck if versioning sample responses)
+json_data/
+
+# Cache / logs
+*.sqlite3
+*.db
+*.log
+
+# Static build artifacts (optional for prod)
+*.tar.gz
+*.egg-info/
+
+# Test/coverage outputs
+.coverage
+htmlcov/
+.tox/
+.pytest_cache/
+
+# Node (if using npm for frontend builds)
+node_modules/
+dist/
